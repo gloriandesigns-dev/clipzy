@@ -70,6 +70,13 @@ struct NotchSettingsView: View {
                 }
                 Spacer()
             }
+
+            HStack {
+                Button("Check for Updates…") {
+                    SparkleUpdater.shared.checkForUpdates()
+                }
+                Spacer()
+            }
         }
         .padding()
         .transition(.scale(scale: 0.8).combined(with: .opacity))

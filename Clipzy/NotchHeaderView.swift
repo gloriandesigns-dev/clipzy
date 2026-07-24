@@ -10,7 +10,7 @@ import SwiftUI
 struct NotchHeaderView: View {
     @StateObject var vm: NotchViewModel
     @StateObject var tvm = TrayDrop.shared
-    @ObservedObject var updateChecker = UpdateChecker.shared
+    @ObservedObject var updateChecker = SparkleUpdater.shared
 
     var body: some View {
         HStack {
@@ -33,7 +33,7 @@ struct NotchHeaderView: View {
                 .padding(.horizontal, 8)
                 .padding(.vertical, 3)
                 .background(Capsule().foregroundStyle(Color.accentColor.opacity(0.15)))
-                .onTapGesture { NSWorkspace.shared.open(updateChecker.releaseURL) }
+                .onTapGesture { SparkleUpdater.shared.checkForUpdates() }
                 .padding(.trailing, 4)
             }
             if !tvm.isEmpty, vm.contentType == .normal {

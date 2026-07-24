@@ -29,7 +29,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         _ = EventMonitors.shared
         ClipboardCapture.startWatching()
-        UpdateChecker.shared.startPeriodicCheck()
+        SparkleUpdater.shared.start()
         let timer = Timer.scheduledTimer(
             withTimeInterval: 1,
             repeats: true

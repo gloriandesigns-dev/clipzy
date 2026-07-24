@@ -43,7 +43,7 @@ That's the whole thing. No accounts, no syncing to a server, no subscription. It
 - [x] Choose how the notch opens: click it, or just hover over it
 - [x] Works alongside your existing menu bar managers
 - [x] Open AirDrop directly from the notch
-- [x] Tells you when a new version is out, right in the tray
+- [x] Updates itself (via Sparkle), one click from notice to installed
 - [x] Fully open source and 100% privacy-focused, nothing leaves your Mac
 - [x] Free, forever, if you build it yourself
 
@@ -122,7 +122,19 @@ Everything's tweakable from the settings screen (click the `⋯` in the tray hea
 
 ## 🔔 Staying Updated
 
-Clipzy checks in with GitHub every few hours. If a newer release is out, you'll see **"A new version is here"** right in the tray header, tap it and it opens the release page so you can grab the latest build. No background installer, no silent changes, you're always the one who decides to update.
+Clipzy uses [Sparkle](https://github.com/sparkle-project/Sparkle) (the same open-source updater used by iTerm2, and a ton of other Mac apps) to update itself.
+
+Once a day it quietly checks the update feed. If a newer version is out, you'll see **"A new version is here"** in the tray header, and Sparkle's own dialog offers to download and install it, you click once, it relaunches on the new version. Nothing installs automatically without your say-so, and everything downloaded is signature-verified before it's ever run. You can also trigger a manual check any time from Settings → **Check for Updates…**.
+
+## 🚢 Releasing a New Version
+
+This section is for maintainers cutting a release, not something end users need to touch.
+
+1. Bump `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION` in the Xcode project, build and zip the app as usual (see below).
+2. One-time setup, if you haven't already: run Sparkle's `generate_keys` tool (ships inside the Sparkle package's `bin/` folder once added via Swift Package Manager) to create an EdDSA keypair. The public key goes in `Info.plist` under `SUPublicEDKey`, replacing the `REPLACE_WITH_YOUR_PUBLIC_ED25519_KEY` placeholder. **Keep the private key off GitHub entirely** — it's what signs every future update, and only needs to exist on the machine cutting releases.
+3. Sign the release zip: `./sign_update Clipzy.zip` (also in Sparkle's `bin/` folder). This prints an `sparkle:edSignature` value.
+4. Add a new `<item>` to `appcast.xml` at the repo root with the new version number, download URL (the GitHub Release asset link), and the signature from step 3. Newest item goes first.
+5. Push `appcast.xml` to `main` and publish the GitHub Release with the zip attached, same as any other release. Existing installs pick up the new item on their next scheduled check (or immediately if the user hits "Check for Updates…").
 
 ## 🔨 Building from Source
 
